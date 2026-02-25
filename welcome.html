@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Welcome</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <section>
+    <div class="welcome-box">
+      <h1>Welcome to CyberSecurity</h1>
+      <p id="userEmail"></p>
+      <button id="logoutBtn">Logout</button>
+    </div>
+  </section>
+  
+  <script>
+  const userJSON = localStorage.getItem("loggedInUser");
+
+  if (!userJSON) {
+
+    window.location.href = "login.html";
+  } else {
+    const user = JSON.parse(userJSON);
+    document.getElementById("userEmail").textContent =
+      `Logged in as: ${user.username} (${user.email})`;
+  }
+  document.getElementById("logoutBtn").addEventListener("click", function () {
+    localStorage.removeItem("loggedInUser");
+    window.location.href = "login.html";
+  });
+</script>
+</body>
+</html>
