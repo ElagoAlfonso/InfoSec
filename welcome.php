@@ -13,10 +13,12 @@ if (!isset($_SESSION["username"])) {
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <div class="welcome-box">
-        <h1>Welcome to CyberSecurity</h1>
-        <p>Logged in as: **<?php echo htmlspecialchars($_SESSION["username"]); ?>** (<?php echo htmlspecialchars($_SESSION["email"] ?? 'No email provided'); ?>)</p>
-        <a href="logout.php"><button>Logout</button></a>
-    </div>
+    <section> 
+        <div class="welcome-box">
+            <h1>Welcome to CyberSecurity</h1>
+            <p>Logged in as: <strong><?php echo htmlspecialchars($_SESSION["username"]); ?></strong> </p>
+            <a href="logout.php"><button id="logoutBtn">Logout</button></a>
+        </div>
+    </section>
 </body>
 </html>
