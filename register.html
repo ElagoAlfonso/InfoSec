@@ -39,18 +39,22 @@
   </section>
 
   <script>
+    // Just making sure the script actually loaded
     console.log("Script loaded and ready!"); 
 
+    // Stop the form from doing a normal refresh and handle it with JS instead
     document.getElementById('registerForm').addEventListener('submit', async function(e) {
         e.preventDefault();
         console.log("Button Clicked! Attempting to send data..."); 
 
+        // Bundle up all the input values to send to PHP
         const formData = new FormData();
         formData.append('username', document.getElementById('username').value);
         formData.append('email', document.getElementById('email').value);
         formData.append('password', document.getElementById('password').value);
 
         try {
+            // Send the data to register.php and wait for it to talk back
             const response = await fetch('register.php', {
                 method: 'POST',
                 body: formData
@@ -60,13 +64,16 @@
             const result = await response.text();
             console.log("Server says:", result); 
 
+            // If PHP says "success", send them to the login page
             if (result.trim() === "success") {
                 alert("✅ SUCCESS!");
                 window.location.href = "login.html";
             } else {
+                // Otherwise, show whatever error the server spat out
                 alert("❌ Server Error: " + result);
             }
         } catch (error) {
+            // This happens if the server is down or the URL is wrong
             console.error("Fetch Error:", error);
             alert("❌ Could not reach register.php. Is Apache running?");
         }

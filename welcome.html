@@ -15,16 +15,20 @@
   </section>
   
   <script>
+  // Check the browser's storage to see if we saved a user earlier
   const userJSON = localStorage.getItem("loggedInUser");
-
+  // If there's nothing in storage, they aren't logged in, so kick them out
   if (!userJSON) {
-
     window.location.href = "login.html";
   } else {
+    // Turn the string back into an object so we can use it
     const user = JSON.parse(userJSON);
+    // Put the name and email on the screen
     document.getElementById("userEmail").textContent =
       `Logged in as: ${user.username} (${user.email})`;
   }
+
+  // When they click logout, just wipe the storage and go back to login
   document.getElementById("logoutBtn").addEventListener("click", function () {
     localStorage.removeItem("loggedInUser");
     window.location.href = "login.html";

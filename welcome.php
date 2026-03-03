@@ -1,6 +1,10 @@
 <?php
+// Gotta start this or we can't see who is logged in
 session_start();
+
+// If the "username" isn't in the session, they aren't logged in
 if (!isset($_SESSION["username"])) {
+    // Kick them back to the login page so they can't sneak in
     header("Location: login.html");
     exit();
 }
