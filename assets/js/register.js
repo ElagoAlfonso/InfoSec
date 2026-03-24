@@ -62,3 +62,26 @@ function checkStrength() {
         msg.style.color = "orange";
     }
 }
+
+document.getElementById('togglePassword').addEventListener('click', function() {
+    const passwordField = document.getElementById('password');
+    if (passwordField.type === "password") {
+        passwordField.type = "text";
+        this.textContent = "⌣";
+    } else {
+        passwordField.type = "password";
+        this.textContent = "👁";
+    }
+});
+ 
+// This part makes the eye icon work so you can see your confirm password
+document.getElementById('toggleConfirmPassword').addEventListener('click', function() {
+    const confirmPasswordField = document.getElementById('confirmPassword');
+    if (confirmPasswordField.type === "password") {
+        confirmPasswordField.type = "text";
+        this.textContent = "⌣";
+    } else {
+        confirmPasswordField.type = "password";
+        this.textContent = "👁";
+    }
+});
