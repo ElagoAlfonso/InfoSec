@@ -20,7 +20,7 @@ document.getElementById('loginForm').addEventListener('submit', async function(e
 
     try {
         // Send the data to the login script and wait for it to finish
-        const response = await fetch('login.php', {
+        const response = await fetch('../auth/login.php', {
             method: 'POST',
             body: formData
         });
@@ -30,7 +30,7 @@ document.getElementById('loginForm').addEventListener('submit', async function(e
         // If PHP liked the credentials, send them to the welcome page
         if (result.trim() === "success") {
             alert("✅ Login successful!");
-            window.location.href = "welcome.php";
+            window.location.href = "../public/welcome.php";
         } else {
             // Otherwise, just show whatever error PHP spat out
             alert("❌ " + result); 
@@ -47,7 +47,7 @@ document.getElementById('togglePassword').addEventListener('click', function() {
     // Swap between dots and actual text
     if (passwordField.type === "password") {
         passwordField.type = "text";
-        this.textContent = "🙈";
+        this.textContent = "⌣";
     } else {
         passwordField.type = "password";
         this.textContent = "👁";
