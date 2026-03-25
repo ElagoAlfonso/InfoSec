@@ -11,34 +11,27 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     if (empty($email) || !filter_var($email, FILTER_VALIDATE_EMAIL)) {
         $error = "Please enter a valid email address.";
     } else {
-        // Check if the email exists in users table
         $check = $conn->prepare("SELECT id FROM users WHERE email = ?");
         $check->bind_param("s", $email);
         $check->execute();
         $result = $check->get_result();
 
         if ($result->num_rows === 0) {
-            // Don't reveal if email exists or not 
             $message = "If this email exists, a reset link has been generated.";
         } else {
-            // Generate a secure random token
-            $token = bin2hex(random_bytes(32)); // 64-char hex string
-            $expiry = date('Y-m-d H:i:s', time() + 15 * 60); // expires in 15 minutes
-
-            // Delete any old tokens for this email first
-            $delete = $conn->prepare("DELETE FROM password_reset_tokens WHERE email = ?");
-            $delete->bind_param("s", $email);
-            $delete->execute();
-
-            // Store the new token in the database
+            // 1. Generate unique token
+            $token = bin2hex(random_bytes(32)); 
+            $expiry = date('Y-m-d H:i:s', time() + 15 * 60);
+            
+            // 2. Insert as a NEW row
             $insert = $conn->prepare("INSERT INTO password_reset_tokens (email, token, expires_at) VALUES (?, ?, ?)");
             $insert->bind_param("sss", $email, $token, $expiry);
-            $insert->execute();
-
-            // In a real app, this link would be emailed to the user.
-            // For local/XAMPP, we display it directly on screen.
-            $resetLink = "http://localhost/cyberapp/auth/reset_password.php?token=" . $token;
-            $message = "Reset link generated!<br><a href='$resetLink' style='color:#0fc;'>Click here to reset your password</a><br><small style='color:#aaa;fontweight:BOLD;'>This link will expire in 15 minutes.</small'>";
+            if (!$insert->execute()) {
+                $error = "Something went wrong. Please try again.";
+            } else {
+                $resetLink = "http://localhost/cyberapp/auth/reset_password.php?token=" . $token;
+                $message = "Reset link generated!<br><a href='$resetLink' style='color:#0fc;'>Click here to reset your password</a><br><small style='color:#aaa; font-weight:bold;'>This link will expire in 15 minutes.</small>";
+            }
         }
     }
 }

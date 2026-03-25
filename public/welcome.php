@@ -36,6 +36,9 @@ $role     = $decoded['role'];
             <h1>Welcome to CyberSecurity</h1>
             <p>Logged in as: <strong><?php echo htmlspecialchars($username); ?></strong></p>
             <p>Role: <strong><?php echo htmlspecialchars($role); ?></strong></p>
+            <?php if ($role === 'admin'): ?>
+                <a href="../public/admin.php"><button id="adminBtn">Admin Dashboard</button></a>
+            <?php endif; ?>
             <a href="../auth/logout.php"><button id="logoutBtn">Logout</button></a>
         </div>
     </section>
