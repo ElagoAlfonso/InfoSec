@@ -59,7 +59,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             <h2>Forgot Password</h2>
 
             <?php if ($submitted): ?>
-                <!-- SUCCESS STATE: hide form, show masked email -->
                 <div style="text-align:center;">
                     <p style="color:#0fc; font-size:1em; margin-bottom:10px;">
                         ✅ Reset link sent to<br>
@@ -68,7 +67,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     <p style="color:#aaa; font-size:0.82em; margin-bottom:20px;">
                         This link will expire in 15 minutes.
                     </p>
-                    <!-- For testing only, remove in production -->
                     <p style="font-size:0.8em;">
                         <a href="<?php echo $resetLink; ?>" style="color:#0fc;">Click here to reset</a>
                     </p>
@@ -79,7 +77,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 </div>
 
             <?php else: ?>
-                <!-- FORM STATE -->
                 <form method="POST" action="">
 
                     <?php if ($error): ?>

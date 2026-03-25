@@ -363,7 +363,6 @@ body {
     letter-spacing: 1px;
 }
 
-/* ── Stat cards ── */
 .stats-grid {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
@@ -428,7 +427,6 @@ body {
     opacity: 0.06;
 }
 
-/* ── Section header ── */
 .section-header {
     display: flex;
     align-items: center;
@@ -464,7 +462,6 @@ body {
     border-radius: 20px;
 }
 
-/* ── Search ── */
 .search-wrap {
     position: relative;
     width: 240px;
@@ -494,7 +491,6 @@ body {
     font-size: 14px;
 }
 
-/* ── Table ── */
 .table-wrap {
     background: var(--panel);
     border: 1px solid var(--border);
