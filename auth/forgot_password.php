@@ -4,6 +4,8 @@ session_start();
 
 $message = "";
 $error = "";
+$submitted = false;
+$maskedEmail = "";
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $email = trim($_POST["email"]);
@@ -17,20 +19,27 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $result = $check->get_result();
 
         if ($result->num_rows === 0) {
-            $message = "If this email exists, a reset link has been generated.";
+            $error = "No account found with that email. Please enter a registered email.";
         } else {
-            // 1. Generate unique token
-            $token = bin2hex(random_bytes(32)); 
+            // Generate token
+            $token = bin2hex(random_bytes(32));
             $expiry = date('Y-m-d H:i:s', time() + 15 * 60);
-            
-            // 2. Insert as a NEW row
+
             $insert = $conn->prepare("INSERT INTO password_reset_tokens (email, token, expires_at) VALUES (?, ?, ?)");
             $insert->bind_param("sss", $email, $token, $expiry);
+
             if (!$insert->execute()) {
                 $error = "Something went wrong. Please try again.";
             } else {
+                // Mask the email: us****@gmail.com
+                $parts = explode("@", $email);
+                $name = $parts[0];
+                $domain = $parts[1];
+                $masked = substr($name, 0, 2) . str_repeat("*", max(4, strlen($name) - 2));
+                $maskedEmail = $masked . "@" . $domain;
+
                 $resetLink = "http://localhost/cyberapp/auth/reset_password.php?token=" . $token;
-                $message = "Reset link generated!<br><a href='$resetLink' style='color:#0fc;'>Click here to reset your password</a><br><small style='color:#aaa; font-weight:bold;'>This link will expire in 15 minutes.</small>";
+                $submitted = true;
             }
         }
     }
@@ -47,32 +56,51 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 <body>
     <section>
         <div class="login-box">
-            <form method="POST" action="">
-                <h2>Forgot Password</h2>
+            <h2>Forgot Password</h2>
 
-                <?php if ($message): ?>
-                    <p style="color: #0fc; text-align:center; font-size:0.9em; margin-bottom:15px;">
-                        <?php echo $message; ?>
+            <?php if ($submitted): ?>
+                <!-- SUCCESS STATE: hide form, show masked email -->
+                <div style="text-align:center;">
+                    <p style="color:#0fc; font-size:1em; margin-bottom:10px;">
+                        ✅ Reset link sent to<br>
+                        <strong style="font-size:1.1em;"><?php echo htmlspecialchars($maskedEmail); ?></strong>
                     </p>
-                <?php endif; ?>
-
-                <?php if ($error): ?>
-                    <p style="color: red; text-align:center; font-size:0.9em; margin-bottom:15px;">
-                        <?php echo htmlspecialchars($error); ?>
+                    <p style="color:#aaa; font-size:0.82em; margin-bottom:20px;">
+                        This link will expire in 15 minutes.
                     </p>
-                <?php endif; ?>
-
-                <div class="input-box">
-                    <input type="email" name="email" required>
-                    <label>Enter your Email</label>
+                    <!-- For testing only, remove in production -->
+                    <p style="font-size:0.8em;">
+                        <a href="<?php echo $resetLink; ?>" style="color:#0fc;">Click here to reset</a>
+                    </p>
+                    <hr style="border-color:#333; margin:20px 0;">
+                    <a href="../auth/forgot_password.php" style="color:#aaa; font-size:0.9em;">
+                        🔄 Use another email
+                    </a>
                 </div>
 
-                <button type="submit">Send Reset Link</button>
+            <?php else: ?>
+                <!-- FORM STATE -->
+                <form method="POST" action="">
 
-                <div class="register-link">
-                    <p>Remembered it? <a href="../public/login.html">Login</a></p>
-                </div>
-            </form>
+                    <?php if ($error): ?>
+                        <p style="color:red; text-align:center; font-size:0.9em; margin-bottom:15px;">
+                            ❌ <?php echo htmlspecialchars($error); ?>
+                        </p>
+                    <?php endif; ?>
+
+                    <div class="input-box">
+                        <input type="email" name="email" required>
+                        <label>Enter your Email</label>
+                    </div>
+
+                    <button type="submit">Send Reset Link</button>
+
+                    <div class="register-link">
+                        <p>Remembered it? <a href="../public/login.html">Login</a></p>
+                    </div>
+                </form>
+            <?php endif; ?>
+
         </div>
     </section>
 </body>
